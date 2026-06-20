@@ -1236,17 +1236,15 @@ class AdvancedBot(BaseBot):
         self.user_dances[username] = emote
         duration = self.emote_durations.get(emote, 7.5)
 
-        async def dance_loop():
-            try:
-                while self.user_dances.get(username) == emote:
-                    await self.highrise.send_animation(emote, user.id)
-                    await sleep(duration + 1.5)
-            except CancelledError:
-                logger.info(f"وظیفه رقص برای {username} لغو شد.")
-            except Exception as e:
-                logger.error(f"خطا در حلقه رقص برای {username}: {e}")
-
-        self.dance_tasks[username] = create_task(dance_loop())
+    async def dance_loop():
+        try:
+            while self.user_dances.get(username) == emote:
+                await self.highrise.send_animation(emote, user.id)
+                await sleep(duration + 1.5)
+        except CancelledError:
+            logger.info(f"وظیفه رقص برای {username} لغو شد.")
+        except Exception as e:
+            logger.error(f"خطا در حلقه رقص برای {username}: {e}")
 
     async def stop_dance(self, user: User):
         username = user.username.lower()
