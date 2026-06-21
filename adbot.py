@@ -79,7 +79,8 @@ class AdvancedBot(BaseBot):
             "!freeze": self.cmd_freeze,
             "!unfreeze": self.cmd_unfreeze,
             "!party": self.cmd_party,
-            "!partys": self.cmd_partys
+            "!partys": self.cmd_partys,
+            "!changeroom": self.cmd_changeroom
         }
         self.emotes = {
             "1": "idle_zombie",
@@ -2421,6 +2422,38 @@ class AdvancedBot(BaseBot):
             await self.highrise.chat(f"خطا در توقف رقص برای @{target_username}: {str(e)}")
             logger.error(f"خطا در cmd_partys برای {target_username}: {str(e)}")
 
+    async def cmd_changeroom(self, user: User, parts: list):
+        # فقط ادمین می‌تونه این کامند رو بزنه
+        if user.username.lower() not in [a.lower() for a in self.config.get("admin_usernames", [])]:
+            await self.highrise.chat("⛔ فقط ادمین می‌تونه روم رو عوض کنه!")
+            return
+
+        if len(parts) < 2:
+            await self.highrise.chat("❌ فرمت صحیح: !changeroom [room_id]")
+            return
+
+        new_room_id = parts[1].strip()
+        current_room_id = os.getenv("ROOM_ID", "")
+
+        await self.highrise.chat(f"⏳ در حال تلاش برای ورود به روم {new_room_id} ...")
+        logger.info(f"تلاش برای تغییر روم به: {new_room_id}")
+
+        try:
+            # ذخیره room_id جدید در محیط
+            os.environ["ROOM_ID"] = new_room_id
+            # ترک روم فعلی — باعث reconnect در main() میشه با ROOM_ID جدید
+            await self.highrise.leave_room()
+            logger.info(f"روم تغییر کرد به: {new_room_id}")
+        except Exception as e:
+            logger.error(f"خطا در تغییر روم: {e}")
+            # برگشت به روم قبلی
+            os.environ["ROOM_ID"] = current_room_id
+            await self.highrise.chat(f"❌ نتونستم وارد روم بشم، برگشتم به روم قبلی.")
+            try:
+                await self.highrise.leave_room()
+            except Exception:
+                pass
+
 async def handle_ping(request):
     return aiohttp.web.Response(text="Bot is Alive!")
 
@@ -2446,7 +2479,7 @@ async def main():
     
     logger.info("تلاش برای بارگذاری متغیرهای محیطی...")
     room_id = os.getenv("ROOM_ID", "68e771922d585712212e8070")
-    api_token = os.getenv("API_TOKEN", "9a089b7f9bb1f38a943a6add2af7e1823a709e51119a7f9c7f870b443bb8c4cc")
+    api_token = os.getenv("API_TOKEN", "2655d9a3c633bf8365bb863c963927a18301474340cb5515736cc721d39e7150")
     
     if not room_id or not api_token:
         logger.error("ROOM_ID یا API_TOKEN تنظیم نشده‌اند.")
@@ -2495,13 +2528,17 @@ async def main():
     attempt = 0
     while attempt < max_reconnect_attempts:
         try:
-            logger.info("تلاش برای اتصال به سرور Highrise...")
+            # هر بار room_id رو از محیط می‌خونه تا !changeroom کار کنه
+            room_id = os.environ.get("ROOM_ID", room_id)
+            bot_instance = AdvancedBot()
+            bot_def = BotDefinition(room_id=room_id, api_token=api_token, bot=bot_instance)
+            logger.info(f"تلاش برای اتصال به سرور Highrise... روم: {room_id}")
             from highrise.__main__ import main as highrise_main
             await highrise_main([bot_def])
         except Exception as e:
             logger.error(f"اتصال WebSocket قطع شد یا خطا داد: {e}")
             try:
-                await bot_def.bot.cleanup_tasks()
+                await bot_instance.cleanup_tasks()
             except Exception:
                 pass
             attempt += 1
