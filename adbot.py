@@ -2430,54 +2430,74 @@ class AdvancedBot(BaseBot):
             logger.error(f"خطا در cmd_partys برای {target_username}: {str(e)}")
 
     async def cmd_changeroom(self, user: User, parts: list):
-        if user.username.lower() not in [a.lower() for a in self.config.get("admin_usernames", [])]:
-            await self.highrise.chat("⛔ فقط ادمین می‌تونه روم رو عوض کنه!")
+        # تبدیل کل لیست ادمین‌ها به حروف کوچک برای جلوگیری از خطای دسترسی
+        admins_lower = [admin.lower() for admin in self.config.get("admin_usernames", [])]
+        if user.username.lower() not in admins_lower:
+            await self.highrise.chat("❌ شما دسترسی لازم برای تغییر روم ربات را ندارید!")
             return
+        
         if len(parts) < 2:
-            await self.highrise.chat("❌ فرمت صحیح: !changeroom room_id")
+            await self.highrise.chat("⚠️ فرمت اشتباه! از این فرمت استفاده کنید: !changeroom ID_ROOM")
             return
-        
+            
         new_room_id = parts[1].strip()
+        await self.highrise.chat(f"🔄 در حال انتقال ربات به روم جدید با آیدی: {new_room_id} ...")
+        logger.info(f"درخواست تغییر دستی روم به {new_room_id} توسط {user.username}")
         
-        # ذخیره در environment
+        # بروزرسانی آیدی در کل اسکلت اجرایی ربات برای جلوگیری از بازگشت به روم قبلی
         os.environ["ROOM_ID"] = new_room_id
         
-        await self.highrise.chat(f"✅ بات به روم جدید {new_room_id[:8]}... منتقل می‌شود. لطفاً صبر کنید...")
-        logger.info(f"درخواست تغییر روم به: {new_room_id} توسط {user.username}")
-        
-        # بعد ۲ ثانیه exception پرتاب کن تا reconnect شه
-        async def delayed_change():
-            await sleep(2)
-            raise Exception(f"Reconnecting to room {new_room_id}")
-        
-        create_task(delayed_change())
+        # لغو تسک‌های جاری و بستن اتصال برای ورود خودکار به روم جدید
+        await self.cleanup_tasks()
+        # این متد به طور ایمن کانال ارتباطی را می‌بندد تا ری‌کانکتور رندر درجا روم جدید را لود کند
+        if hasattr(self, 'highrise') and hasattr(self.highrise, 'tg_channel'):
+            try:
+                self.highrise.tg_channel.close()
+            except Exception:
+                pass
 
     async def cmd_emotebot(self, user: User, parts: list):
-        if len(parts) < 2:
-            await self.highrise.chat("❌ فرمت صحیح: !emotebot emote_name")
+        admins_lower = [admin.lower() for admin in self.config.get("admin_usernames", [])]
+        if user.username.lower() not in admins_lower:
+            await self.highrise.chat("❌ این دستور مخصوص ادمین‌های ربات است!")
             return
+
+        if len(parts) < 2:
+            await self.highrise.chat("⚠️ فرمت اشتباه! نام یا شماره دنس را وارد کنید. مثال: !emotebot kpop")
+            return
+
+        input_emote = parts[1].strip().lower()
+
+        # پیدا کردن نام رسمی دنس از روی شماره یا نام مستعار وارد شده
+        actual_emote_name = self.emotes.get(input_emote)
         
-        emote_name = parts[1].strip()
-        
-        # متوقف کردن دنس قبلی بات
+        # اگر کاربر خودش نام رسمی را وارد کرده بود (مثلا dance-blackpink)
+        if not actual_emote_name and input_emote in self.emotes.values():
+            actual_emote_name = input_emote
+
+        if not actual_emote_name:
+            await self.highrise.chat("❌ دنس یا شماره وارد شده در لیست دنس‌های ربات پیدا نشد!")
+            return
+
+        # متوقف کردن دنس قبلی ربات در صورت وجود
         if self.user_id in self.dance_tasks:
             self.dance_tasks[self.user_id].cancel()
-            del self.dance_tasks[self.user_id]
-        
-        await self.highrise.chat(f"✅ دنس بات تغییر کرد به: {emote_name}")
-        logger.info(f"دنس بات تغییر کرد به: {emote_name} توسط {user.username}")
-        
-        # شروع دنس جدید
+            self.dance_tasks.pop(self.user_id, None)
+
+        await self.highrise.chat(f"✅ دنس ربات با موفقیت به [{input_emote}] تغییر یافت.")
+        logger.info(f"دنس ربات به {actual_emote_name} توسط {user.username} تغییر کرد.")
+
+        # شروع حلقه دنس جدید با نام رسمی تایید شده توسط سرور
         async def new_emote_loop():
             try:
                 while True:
-                    await self.highrise.send_emote(emote_name, self.user_id)
+                    await self.highrise.send_emote(actual_emote_name, self.user_id)
                     await sleep(8.0)
             except CancelledError:
-                logger.info("دنس بات لغو شد.")
+                logger.info("دنس مداوم ربات لغو شد.")
             except Exception as e:
-                logger.error(f"خطا در دنس بات: {e}")
-        
+                logger.error(f"خطا در دنس مداوم ربات: {e}")
+
         self.dance_tasks[self.user_id] = create_task(new_emote_loop())
 
 async def handle_ping(request):
