@@ -768,7 +768,7 @@ class AdvancedBot(BaseBot):
             "relaxing": "idle-floorsleeping2",
             "attention": "emote-salute",
             "floss": "dance-floss",
-            "rest": "idle-rest",
+            "rest": "sit-idle-cute",
             "sit": "idle-loop-sitfloor"
             
         }
@@ -1134,7 +1134,11 @@ class AdvancedBot(BaseBot):
     async def on_user_join(self, user: User, position: Position):
         username = user.username.lower()
         if username in self.config["banned_users"]:
-            await self.highrise.chat(self.get_message("ban_success", username=user.username))
+            try:
+                await self.highrise.moderate_room(user.id, "kick")
+                logger.info(f"کاربر بن‌شده {user.username} به صورت خودکار کیک شد.")
+            except Exception as e:
+                logger.error(f"خطا در کیک کردن {user.username}: {e}")
             return
         self.active_users[username] = user
         self.user_positions[username] = position
