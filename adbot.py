@@ -32,9 +32,9 @@ DEFAULT_CONFIG = {
         "dj": {"x": 9.5, "y": 10.75, "z": 10.5}
     },
     "language": "fa",
-    "welcome_message": "✨ 🌟 𝐖𝐞𝐥𝐜𝐨𝐦𝐞 {username} ❤️ 𝐆𝐥𝐚𝐝 𝐭𝐨 𝐡𝐚𝐯𝐞 𝐲𝐨𝐮 𝐡𝐞𝐫𝐞!\n🕺 𝐔𝐬𝐞 𝐍𝐮𝐦𝐛𝐞𝐫𝐬 (𝟏-𝟐𝟑𝟎) 𝐨𝐫 𝐄𝐦𝐨𝐭𝐞 𝐍𝐚𝐦𝐞𝐬 𝐭𝐨 𝐝𝐚𝐧𝐜𝐞!\n👑 𝐓𝐡𝐢𝐬 𝐛𝐨𝐭 𝐰𝐚𝐬 𝐜𝐫𝐞𝐚𝐭𝐞𝐝 & 𝐝𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐝 𝐛𝐲 @𝐚𝐝𝟎𝐫𝐢 😉\n📺 𝐒𝐮𝐛𝐬𝐜𝐫𝐢𝐛𝐞 𝐭𝐨 𝐨𝐮𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞: @𝐚𝐝𝐨𝐫𝐢_𝐡𝐢𝐭𝐨𝐭𝐬𝐨 🚀",
+    "welcome_message": "✨ 🌟 𝐖𝐞𝐥𝐜𝐨𝐦𝐞 {username} ❤️ 𝐆𝐥𝐚𝐝 𝐭𝐨 𝐡𝐚𝐯𝐞 𝐲𝐨𝐮 𝐡𝐞𝐫𝐞!\n🕺 𝐔𝐬𝐞 𝐍𝐮𝐦𝐛𝐞𝐫𝐬 (𝟏-𝟐𝟒𝟖) 𝐨𝐫 𝐄𝐦𝐨𝐭𝐞 𝐍𝐚𝐦𝐞𝐬 𝐭𝐨 𝐝𝐚𝐧𝐜𝐞!\n👑 𝐓𝐡𝐢𝐬 𝐛𝐨𝐭 𝐰𝐚𝐬 𝐜𝐫𝐞𝐚𝐭𝐞𝐝 & 𝐝𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐝 𝐛𝐲 @𝐚𝐝𝟎𝐫𝐢 😉\n📺 𝐒𝐮𝐛𝐬𝐜𝐫𝐢𝐛𝐞 𝐭𝐨 𝐨𝐮𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞: @𝐚𝐝𝐨𝐫𝐢_𝐡𝐢𝐭𝐨𝐭𝐬𝐨 🚀",
     "announcement_interval": 300,
-    "announcement_message": "برای دیدن دستورات ربات، !help بزنید!"
+    "announcement_message": "برای اجاره بات به آیدی @ad0ri پیام دهید!"
 }
 
 class AdvancedBot(BaseBot):
@@ -316,6 +316,24 @@ class AdvancedBot(BaseBot):
             "228": "dance-twerk",
             "229": "idle-space",
             "230": "sit-idle-cute",
+            "231": "dance-true-heart",
+            "232": "dance-griddy",
+            "233": "dance-ballet",
+            "234": "dance-freshprince",
+            "235": "emote-idle-daydreaming",
+            "236": "emote-graceful",
+            "237": "dance-spiritual",
+            "238": "dance-popularvibe",
+            "239": "sit-idle-laidBack",
+            "240": "dance-martial-artist",
+            "241": "dance-swagbounce",
+            "242": "emote-lust",
+            "243": "dance-woah",
+            "244": "dance-mine",
+            "245": "emote-blowkisses",
+            "246": "emote-hero",
+            "247": "dance-shuffle",
+            "248": "emote-knocking-screen",
             "۱": "idle_zombie",
             "۲": "idle_layingdown2",
             "۳": "idle_layingdown",
@@ -546,6 +564,24 @@ class AdvancedBot(BaseBot):
             "۲۲۸": "dance-twerk",
             "۲۲۹": "idle-space",
             "۲۳۰": "sit-idle-cute",
+            "۲۳۱": "dance-true-heart",
+            "۲۳۲": "dance-griddy",
+            "۲۳۳": "dance-ballet",
+            "۲۳۴": "dance-freshprince",
+            "۲۳۵": "emote-idle-daydreaming",
+            "۲۳۶": "emote-graceful",
+            "۲۳۷": "dance-spiritual",
+            "۲۳۸": "dance-popularvibe",
+            "۲۳۹": "sit-idle-laidBack",
+            "۲۴۰": "dance-martial-artist",
+            "۲۴۱": "dance-swagbounce",
+            "۲۴۲": "emote-lust",
+            "۲۴۳": "dance-woah",
+            "۲۴۴": "dance-mine",
+            "۲۴۵": "emote-blowkisses",
+            "۲۴۶": "emote-hero",
+            "۲۴۷": "dance-shuffle",
+            "۲۴۸": "emote-knocking-screen",
             "zombie": "idle_zombie",
             "relaxed": "idle_layingdown2",
             "attentive": "idle_layingdown",
@@ -1264,7 +1300,7 @@ class AdvancedBot(BaseBot):
             "سلام عزیز! ❤️\n\n"
             "🤖 من یک ربات پیشرفته و فول امکانات برای مدیریت و ارتقای روم هستم!\n\n"
             "✨ **بخشی از قابلیت‌های خفن من:**\n"
-            "🔹 دارای ۲۳۰ دنس جذاب و فعال با تکرار همیشگی و بدون حتی ۱ ثانیه تاخیر! 💃\n"
+            "🔹 دارای ۲۴۸ دنس جذاب و فعال با تکرار همیشگی و بدون حتی ۱ ثانیه تاخیر! 💃\n"
             "🔹 سیستم خوش‌آمدگویی هوشمند و خودکار به محض ورود پلیرها 🚪\n"
             "🔹 قابلیت رقص همگانی و پارتی خودکار برای کل اعضای روم 🕺\n"
             "🔹 امنیت بالا و مدیریت کامل ادمین‌ها و دستورات اختصاصی 🛠️\n"
@@ -2586,7 +2622,7 @@ async def main():
     from http.server import BaseHTTPRequestHandler, HTTPServer
     
     logger.info("تلاش برای بارگذاری متغیرهای محیطی...")
-    room_id = os.getenv("ROOM_ID", "652568897fbe9c9bd8f2a595")
+    room_id = os.getenv("ROOM_ID", "68e771922d585712212e8070")
     api_token = os.getenv("API_TOKEN", "2655d9a3c633bf8365bb863c963927a18301474340cb5515736cc721d39e7150")
     
     if not room_id or not api_token:
